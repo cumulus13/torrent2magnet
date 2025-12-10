@@ -1,5 +1,14 @@
+#!/usr/bin/env python3
+# File: ../torrent2magnet/torrent2magnet.py
+# Author: Hadi Cahyadi <cumulus13@gmail.com>
+# Date: 2025-12-10
+# Description: 
+# License: MIT
+
 import sys
 import os
+import clipboard
+import argparse
 try:
     import bencodepy
 except ImportError:
@@ -23,5 +32,16 @@ def make_magnet_from_file(file) :
              + '&xl=' + str(metadata[b'info'][b'piece length'])
 
 if __name__ == "__main__":
-    magnet = make_magnet_from_file(sys.argv[1])
-    print(magnet)
+    parser = argparse.ArgumentParser(prog='t2m')
+    parser.add_argument("FILE", help="File *.torrent")
+    parser.add_argument('-c', '--clip', help='Copy result to clipboard', action='store_true')
+    
+    if len(sys.argv) == 1:
+        parser.print_help()
+    else:
+        args = parser.parse_args()
+
+        magnet = make_magnet_from_file(args.FILE)
+        if args.clip:
+            clipboard.copy(magnet)
+        print(magnet)
